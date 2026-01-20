@@ -1,6 +1,6 @@
 # Omnicore Product Service
 
-Product management microservice for the Omnicore e-commerce platform.
+Products management microservice for the Omnicore e-commerce platform.
 
 ## Features
 
