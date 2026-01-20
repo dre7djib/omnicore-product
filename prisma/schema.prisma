@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Country {
+  id             String           @id @default(uuid())
+  name           String
+  countryCode    String           @unique @map("country_code")
+  currency       String
+  isActive       Boolean          @default(true) @map("is_active")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  countryProducts CountryProduct[]
+
+  @@map("countries")
+}
+
+model Product {
+  id              String           @id @default(uuid())
+  name            String
+  description     String?
+  isActive        Boolean          @default(true) @map("is_active")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  countryProducts CountryProduct[]
+  images          ProductImage[]
+
+  @@map("products")
+}
+
+model CountryProduct {
+  id          String   @id @default(uuid())
+  productId   String   @map("product_id")
+  countryId   String   @map("country_id")
+  price       Float
+  currency    String
+  quantity    Int      @default(0)
+  isAvailable Boolean  @default(true) @map("is_available")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, countryId])
+  @@index([productId])
+  @@index([countryId])
+  @@map("country_products")
+}
+
+model ProductImage {
+  id        String  @id @default(uuid())
+  productId String  @map("product_id")
+  url       String
+  isPrimary Boolean @default(false) @map("is_primary")
+  
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("product_images")
+}
