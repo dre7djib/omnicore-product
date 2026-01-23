@@ -1,18 +1,25 @@
-const morgan = require('morgan');
-const logger = require('../config/logger');
+const pinoHttp = require('pino-http');
+const { buildEcsLog } = require('../config/logger');
 
-const stream = {
-  write: (message) => logger.http(message.trim()),
-};
+const httpLogger = pinoHttp({
+  logger: buildEcsLog({ base: { component: 'http' } }),
+  customLogLevel(res, err) {
+    if (err || res.statusCode >= 500) {
+      return 'error';
+    }
+    if (res.statusCode >= 400) {
+      return 'warn';
+    }
+    return 'info';
+  },
+  customSuccessMessage(res) {
+    return `${res.req.method} ${res.req.url} ${res.statusCode}`;
+  },
+  customErrorMessage(error, res) {
+    const method = res && res.req ? res.req.method : 'HTTP';
+    const url = res && res.req ? res.req.url : '';
+    return `${method} ${url} failed`;
+  },
+});
 
-const skip = () => {
-  const env = process.env.NODE_ENV || 'development';
-  return env !== 'development';
-};
-
-const morganMiddleware = morgan(
-  ':method :url :status :res[content-length] - :response-time ms',
-  { stream, skip }
-);
-
-module.exports = morganMiddleware;
+module.exports = httpLogger;

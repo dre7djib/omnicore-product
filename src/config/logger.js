@@ -1,69 +1,45 @@
-const winston = require('winston');
-const path = require('path');
+const pino = require('pino');
 
-const logDir = 'logs';
+const buildEcsLog = (overrides = {}) => {
+  const { serviceName, base: userBase, level: overrideLevel, ...rest } = overrides;
+  const env = process.env.NODE_ENV || 'development';
+  const defaultLevel = env === 'production' ? 'info' : 'debug';
+  const level = overrideLevel || process.env.LOG_LEVEL || defaultLevel;
 
-const logLevels = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  http: 3,
-  debug: 4,
+  const base = {
+    service: serviceName || 'omnicore-product',
+    env,
+    ...userBase,
+  };
+
+  const config = {
+    level,
+    base,
+    timestamp: pino.stdTimeFunctions.isoTime,
+    formatters: {
+      level(label, number) {
+        return { 'log.level': number, level: label };
+      },
+      log(object) {
+        if (object.err instanceof Error) {
+          return {
+            ...object,
+            error: {
+              type: object.err.name,
+              message: object.err.message,
+              stack_trace: object.err.stack,
+            },
+          };
+        }
+        return object;
+      },
+    },
+    ...rest,
+  };
+
+  return pino(config);
 };
 
-const logColors = {
-  error: 'red',
-  warn: 'yellow',
-  info: 'green',
-  http: 'magenta',
-  debug: 'blue',
-};
+const logger = buildEcsLog();
 
-winston.addColors(logColors);
-
-const format = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  winston.format.errors({ stack: true }),
-  winston.format.splat(),
-  winston.format.json()
-);
-
-const consoleFormat = winston.format.combine(
-  winston.format.colorize({ all: true }),
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  winston.format.printf(
-    (info) => `${info.timestamp} ${info.level}: ${info.message}${info.stack ? '\n' + info.stack : ''}`
-  )
-);
-
-const transports = [
-  new winston.transports.Console({
-    format: consoleFormat,
-  }),
-  new winston.transports.File({
-    filename: path.join(logDir, 'error.log'),
-    level: 'error',
-    maxsize: 5242880, // 5MB
-    maxFiles: 5,
-  }),
-  new winston.transports.File({
-    filename: path.join(logDir, 'combined.log'),
-    maxsize: 5242880, // 5MB
-    maxFiles: 5,
-  }),
-];
-
-const logger = winston.createLogger({
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-  levels: logLevels,
-  format,
-  transports,
-  exceptionHandlers: [
-    new winston.transports.File({ filename: path.join(logDir, 'exceptions.log') })
-  ],
-  rejectionHandlers: [
-    new winston.transports.File({ filename: path.join(logDir, 'rejections.log') })
-  ],
-});
-
-module.exports = logger;
+module.exports = { buildEcsLog, logger };

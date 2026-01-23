@@ -2,7 +2,7 @@ require('dotenv').config();
 const app = require('./app');
 const { connectDB, disconnectDB } = require('./config/database');
 const config = require('./config');
-const logger = require('./config/logger');
+const { logger } = require('./config/logger');
 
 const PORT = config.port;
 
@@ -28,7 +28,7 @@ const startServer = async () => {
     process.on('SIGINT', gracefulShutdown);
 
   } catch (error) {
-    logger.error('❌ Failed to start server:', error);
+    logger.error({ err: error }, '❌ Failed to start server');
     process.exit(1);
   }
 };

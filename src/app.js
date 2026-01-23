@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morganMiddleware = require('./middlewares/morgan');
-const logger = require('./config/logger');
+const { logger } = require('./config/logger');
 
 const app = express();
 
@@ -17,9 +17,17 @@ app.get('/health', (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`, {
-    error: err.stack,
-  });
+  logger.error(
+    {
+      err,
+      status: err.status || 500,
+      method: req.method,
+      path: req.originalUrl,
+      ip: req.ip,
+    },
+    'Unhandled application error'
+  );
+
   res.status(err.status || 500).json({
     error: {
       message: err.message || 'Internal Server Error',
