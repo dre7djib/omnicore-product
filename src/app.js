@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 const pinoHttpMiddleware = require('./middlewares/pino-http');
 const { correlationId, attachCorrelationId } = require('./middlewares/correlation');
 const { logger } = require('./config/logger');
@@ -14,6 +16,8 @@ app.use(attachCorrelationId);
 app.use(pinoHttpMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/health', (req, res) => {
   res.status(200).json({

@@ -11,6 +11,32 @@ const validate = (req, res, next) => {
   next();
 };
 
+/**
+ * @swagger
+ * /api/countries:
+ *   post:
+ *     tags: [Countries]
+ *     summary: Create a new country
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CountryInput'
+ *     responses:
+ *       201:
+ *         description: Country created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Country'
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ValidationError'
+ */
 router.post(
   '/',
   [
@@ -23,8 +49,48 @@ router.post(
   countryController.create,
 );
 
+/**
+ * @swagger
+ * /api/countries:
+ *   get:
+ *     tags: [Countries]
+ *     summary: List all countries
+ *     responses:
+ *       200:
+ *         description: List of countries
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Country'
+ */
 router.get('/', countryController.getAll);
 
+/**
+ * @swagger
+ * /api/countries/{id}:
+ *   get:
+ *     tags: [Countries]
+ *     summary: Get a country by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Country ID
+ *     responses:
+ *       200:
+ *         description: Country found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Country'
+ *       404:
+ *         description: Country not found
+ */
 router.get(
   '/:id',
   [
@@ -34,6 +100,38 @@ router.get(
   countryController.getById,
 );
 
+/**
+ * @swagger
+ * /api/countries/{id}:
+ *   put:
+ *     tags: [Countries]
+ *     summary: Update a country
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Country ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CountryInput'
+ *     responses:
+ *       200:
+ *         description: Country updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Country'
+ *       400:
+ *         description: Validation error
+ *       404:
+ *         description: Country not found
+ */
 router.put(
   '/:id',
   [
@@ -47,6 +145,26 @@ router.put(
   countryController.update,
 );
 
+/**
+ * @swagger
+ * /api/countries/{id}:
+ *   delete:
+ *     tags: [Countries]
+ *     summary: Delete a country
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Country ID
+ *     responses:
+ *       200:
+ *         description: Country deleted
+ *       404:
+ *         description: Country not found
+ */
 router.delete(
   '/:id',
   [
