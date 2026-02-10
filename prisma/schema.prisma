@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Shared Prisma schema — must stay in sync across all omnicore services
+// Source of truth: omnicore-product/prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
@@ -10,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Country {
@@ -50,7 +46,7 @@ model CountryProduct {
   quantity    Int      @default(0)
   isAvailable Boolean  @default(true) @map("is_available")
   updatedAt   DateTime @updatedAt @map("updated_at")
-  
+
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
 
@@ -66,7 +62,7 @@ model ProductImage {
   url       String  @db.Text
   publicId  String? @map("public_id") @db.Text
   isPrimary Boolean @default(false) @map("is_primary")
-  
+
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
@@ -92,7 +88,7 @@ model AuthUser {
   lastLoginAt     DateTime?     @map("last_login_at")
   createdAt       DateTime      @default(now()) @map("created_at")
   updatedAt       DateTime      @updatedAt @map("updated_at")
-  
+
   country         Country?      @relation(fields: [countryId], references: [id], onDelete: SetNull)
   user            User?
   userRoles       UserRole[]
@@ -111,7 +107,7 @@ model User {
   status          String?           @db.VarChar(50)
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt @map("updated_at")
-  
+
   authUser        AuthUser          @relation(fields: [id], references: [id], onDelete: Cascade)
   country         Country?          @relation(fields: [countryId], references: [id], onDelete: SetNull)
   userAddresses   UserAddress[]
@@ -126,7 +122,7 @@ model UserRole {
   userId     String   @map("user_id")
   roleId     String   @map("role_id")
   assignedAt DateTime @default(now()) @map("assigned_at")
-  
+
   authUser   AuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
   role       Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
@@ -142,7 +138,7 @@ model AuthSession {
   ipAddress    String?   @map("ip_address") @db.VarChar(45)
   userAgent    String?   @map("user_agent") @db.Text
   createdAt    DateTime  @default(now()) @map("created_at")
-  
+
   authUser     AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -158,7 +154,7 @@ model UserAddress {
   postalCode String?  @map("postal_code") @db.VarChar(20)
   isPrimary  Boolean  @default(false) @map("is_primary")
   createdAt  DateTime @default(now()) @map("created_at")
-  
+
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   country    Country? @relation(fields: [countryId], references: [id], onDelete: SetNull)
 
@@ -173,7 +169,7 @@ model UserPreference {
   language             String? @db.VarChar(10)
   timezone             String? @db.VarChar(50)
   notificationsEnabled Boolean @default(true) @map("notifications_enabled")
-  
+
   user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_preferences")
@@ -185,7 +181,7 @@ model UserAuditLog {
   action      String   @db.VarChar(255)
   performedBy String?  @map("performed_by")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
