@@ -25,7 +25,7 @@ class CountryProductService {
     return countryProductRepository.create(data);
   }
 
-  async getAllCountryProducts(filters = {}) {
+  getAllCountryProducts(filters = {}) {
     return countryProductRepository.findAll(filters);
   }
 

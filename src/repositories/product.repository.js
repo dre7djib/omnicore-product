@@ -1,14 +1,14 @@
 const prisma = require('../config/database').prisma;
 
 class ProductRepository {
-  async create(data) {
+  create(data) {
     return prisma.product.create({
       data,
       include: { images: true },
     });
   }
 
-  async findAll({ isActive } = {}) {
+  findAll({ isActive } = {}) {
     return prisma.product.findMany({
       where: isActive !== undefined ? { isActive } : undefined,
       include: { images: true },
@@ -16,7 +16,7 @@ class ProductRepository {
     });
   }
 
-  async findById(id) {
+  findById(id) {
     return prisma.product.findUnique({
       where: { id },
       include: {
@@ -28,7 +28,7 @@ class ProductRepository {
     });
   }
 
-  async update(id, data) {
+  update(id, data) {
     return prisma.product.update({
       where: { id },
       data,
@@ -36,7 +36,7 @@ class ProductRepository {
     });
   }
 
-  async delete(id) {
+  delete(id) {
     return prisma.product.delete({ where: { id } });
   }
 }

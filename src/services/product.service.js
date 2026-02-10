@@ -42,7 +42,7 @@ class ProductService {
     return productRepository.findById(product.id);
   }
 
-  async getAllProducts(filters = {}) {
+  getAllProducts(filters = {}) {
     return productRepository.findAll(filters);
   }
 

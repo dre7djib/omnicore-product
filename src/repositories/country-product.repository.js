@@ -1,7 +1,7 @@
 const prisma = require('../config/database').prisma;
 
 class CountryProductRepository {
-  async create(data) {
+  create(data) {
     return prisma.countryProduct.create({
       data,
       include: {
@@ -11,7 +11,7 @@ class CountryProductRepository {
     });
   }
 
-  async findAll({ countryId, productId, isAvailable } = {}) {
+  findAll({ countryId, productId, isAvailable } = {}) {
     const where = {};
     if (countryId) {
       where.countryId = countryId;
@@ -33,7 +33,7 @@ class CountryProductRepository {
     });
   }
 
-  async findById(id) {
+  findById(id) {
     return prisma.countryProduct.findUnique({
       where: { id },
       include: {
@@ -43,7 +43,7 @@ class CountryProductRepository {
     });
   }
 
-  async findByProductAndCountry(productId, countryId) {
+  findByProductAndCountry(productId, countryId) {
     return prisma.countryProduct.findUnique({
       where: {
         productId_countryId: { productId, countryId },
@@ -55,7 +55,7 @@ class CountryProductRepository {
     });
   }
 
-  async update(id, data) {
+  update(id, data) {
     return prisma.countryProduct.update({
       where: { id },
       data,
@@ -66,7 +66,7 @@ class CountryProductRepository {
     });
   }
 
-  async delete(id) {
+  delete(id) {
     return prisma.countryProduct.delete({ where: { id } });
   }
 }

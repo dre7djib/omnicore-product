@@ -1,30 +1,30 @@
 const prisma = require('../config/database').prisma;
 
 class ProductImageRepository {
-  async create(data) {
+  create(data) {
     return prisma.productImage.create({ data });
   }
 
-  async createMany(data) {
+  createMany(data) {
     return prisma.productImage.createMany({ data });
   }
 
-  async findByProductId(productId) {
+  findByProductId(productId) {
     return prisma.productImage.findMany({
       where: { productId },
       orderBy: [{ isPrimary: 'desc' }, { id: 'asc' }],
     });
   }
 
-  async findById(id) {
+  findById(id) {
     return prisma.productImage.findUnique({ where: { id } });
   }
 
-  async update(id, data) {
+  update(id, data) {
     return prisma.productImage.update({ where: { id }, data });
   }
 
-  async delete(id) {
+  delete(id) {
     return prisma.productImage.delete({ where: { id } });
   }
 

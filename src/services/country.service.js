@@ -9,7 +9,7 @@ class CountryService {
     return countryRepository.create(data);
   }
 
-  async getAllCountries(filters = {}) {
+  getAllCountries(filters = {}) {
     return countryRepository.findAll(filters);
   }
 

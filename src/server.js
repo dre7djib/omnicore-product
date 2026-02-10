@@ -15,7 +15,7 @@ const startServer = async () => {
       logger.info(`📝 Environment: ${config.nodeEnv}`);
     });
 
-    const gracefulShutdown = async () => {
+    const gracefulShutdown = () => {
       logger.warn('🛑 Shutting down gracefully...');
       server.close(async () => {
         await disconnectDB();
