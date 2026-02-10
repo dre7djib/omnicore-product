@@ -13,7 +13,7 @@
     "test:unit": "npx jest --coverage",
     "test:watch": "npx jest --watch",
     "test:endpoints": "./scripts/test-endpoints.sh",
-    "test:integration": "newman run postman_collection.json --bail",
+    "test:integration": "newman run postman_collection.json --bail --folder 'Health Check' --folder 'Countries' --folder 'Products' --folder 'Country Products (Multi-Country Stock)' --folder 'Validation Tests'",
     "lint": "npx --yes eslint@8 src tests",
     "lint:fix": "npx --yes eslint@8 src tests --fix",
     "security:audit": "npm audit --audit-level=moderate --omit=dev",
