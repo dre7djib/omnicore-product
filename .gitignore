@@ -1,8 +1,12 @@
 # Dependencies
 node_modules
 node_modules/
-package-lock.json
-AGENTS.md
+
+# Documentation (except README.md)
+*.md
+!README.md
+!docs/README.md
+!.github/**/*.md
 
 # Environment variables
 .env

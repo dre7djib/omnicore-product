@@ -9,13 +9,13 @@ const PORT = config.port;
 const startServer = async () => {
   try {
     await connectDB();
-    
+
     const server = app.listen(PORT, () => {
       logger.info(`🚀 Product Service running on port ${PORT}`);
       logger.info(`📝 Environment: ${config.nodeEnv}`);
     });
 
-    const gracefulShutdown = async () => {
+    const gracefulShutdown = () => {
       logger.warn('🛑 Shutting down gracefully...');
       server.close(async () => {
         await disconnectDB();

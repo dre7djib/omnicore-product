@@ -16,6 +16,17 @@ const buildEcsLog = (overrides = {}) => {
     level,
     base,
     timestamp: pino.stdTimeFunctions.isoTime,
+    redact: {
+      paths: [
+        'req.headers.authorization',
+        'req.headers.cookie',
+        'req.body.password',
+        'req.body.passwordHash',
+        'req.body.token',
+        'res.headers["set-cookie"]',
+      ],
+      censor: '[REDACTED]',
+    },
     formatters: {
       level(label, number) {
         return { 'log.level': number, level: label };
@@ -36,6 +47,19 @@ const buildEcsLog = (overrides = {}) => {
     },
     ...rest,
   };
+
+  // Pretty print in development for better readability
+  if (env === 'development' && !process.env.CI) {
+    config.transport = {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        translateTime: 'HH:MM:ss Z',
+        ignore: 'pid,hostname',
+        singleLine: false,
+      },
+    };
+  }
 
   return pino(config);
 };
