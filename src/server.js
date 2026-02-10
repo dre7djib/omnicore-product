@@ -9,7 +9,7 @@ const PORT = config.port;
 const startServer = async () => {
   try {
     await connectDB();
-    
+
     const server = app.listen(PORT, () => {
       logger.info(`🚀 Product Service running on port ${PORT}`);
       logger.info(`📝 Environment: ${config.nodeEnv}`);
