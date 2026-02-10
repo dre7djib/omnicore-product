@@ -12,6 +12,9 @@ jobs:
     name: Code Quality & Tests
     runs-on: ubuntu-latest
     
+    env:
+      DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci_db?schema=public"
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
