@@ -156,6 +156,43 @@ describe('ProductService', () => {
     });
   });
 
+  describe('patchProduct (partial update)', () => {
+    it('should update only the provided fields', async () => {
+      const existingProduct = { id: '1', name: 'Old Name', description: 'Old Desc', isActive: true };
+      const patchedProduct = { id: '1', name: 'Old Name', description: 'New Desc', isActive: true };
+
+      productRepository.findById.mockResolvedValue(existingProduct);
+      productRepository.update.mockResolvedValue(patchedProduct);
+
+      const result = await productService.updateProduct('1', { description: 'New Desc' });
+
+      expect(productRepository.update).toHaveBeenCalledWith('1', { description: 'New Desc' });
+      expect(result.name).toEqual('Old Name');
+      expect(result.description).toEqual('New Desc');
+    });
+
+    it('should update only the name when only name is provided', async () => {
+      const existingProduct = { id: '1', name: 'Old Name', description: 'Desc', isActive: true };
+      const patchedProduct = { id: '1', name: 'Patched Name', description: 'Desc', isActive: true };
+
+      productRepository.findById.mockResolvedValue(existingProduct);
+      productRepository.update.mockResolvedValue(patchedProduct);
+
+      const result = await productService.updateProduct('1', { name: 'Patched Name' });
+
+      expect(productRepository.update).toHaveBeenCalledWith('1', { name: 'Patched Name' });
+      expect(result.name).toEqual('Patched Name');
+      expect(result.description).toEqual('Desc');
+    });
+
+    it('should throw error when product not found for patch', async () => {
+      productRepository.findById.mockResolvedValue(null);
+
+      await expect(productService.updateProduct('999', { name: 'New' }))
+        .rejects.toThrow('Product not found');
+    });
+  });
+
   describe('deleteProduct', () => {
     it('should delete product when it exists', async () => {
       const mockProduct = { id: '1', name: 'Test Product' };

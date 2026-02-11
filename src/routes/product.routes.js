@@ -204,6 +204,57 @@ router.put(
 /**
  * @swagger
  * /api/products/{id}:
+ *   patch:
+ *     tags: [Products]
+ *     summary: Partially update a product
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Product ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               isActive:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Product updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Validation error
+ *       404:
+ *         description: Product not found
+ */
+router.patch(
+  '/:id',
+  [
+    param('id').isUUID().withMessage('Invalid product ID'),
+    body('name').optional().trim().notEmpty().withMessage('Name cannot be empty'),
+    body('description').optional().trim(),
+    body('isActive').optional().isBoolean().withMessage('isActive must be boolean'),
+    validate,
+  ],
+  productController.update,
+);
+
+/**
+ * @swagger
+ * /api/products/{id}:
  *   delete:
  *     tags: [Products]
  *     summary: Delete a product
