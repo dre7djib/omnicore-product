@@ -66,6 +66,10 @@ class CountryProductRepository {
     });
   }
 
+  hasOrderItems(id) {
+    return prisma.orderItem.count({ where: { countryProductId: id } });
+  }
+
   delete(id) {
     return prisma.countryProduct.delete({ where: { id } });
   }

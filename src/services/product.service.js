@@ -61,6 +61,12 @@ class ProductService {
 
   async deleteProduct(id) {
     await this.getProductById(id);
+    const itemCount = await productRepository.hasOrderItems(id);
+    if (itemCount > 0) {
+      const err = new Error(`Cannot delete: this product has ${itemCount} existing order item(s)`);
+      err.status = 409;
+      throw err;
+    }
     return productRepository.delete(id);
   }
 

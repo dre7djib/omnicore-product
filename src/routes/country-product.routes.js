@@ -3,6 +3,20 @@ const router = express.Router();
 const countryProductController = require('../controllers/country-product.controller');
 const { body, param, validationResult } = require('express-validator');
 
+// Stripe-supported ISO 4217 currency codes
+const STRIPE_CURRENCIES = [
+  'usd','aed','afn','all','amd','ang','aoa','ars','aud','awg','azn','bam','bbd','bdt','bgn',
+  'bhd','bif','bmd','bnd','bob','brl','bsd','bwp','byn','bzd','cad','cdf','chf','clp','cny',
+  'cop','crc','cve','czk','djf','dkk','dop','dzd','egp','etb','eur','fjd','fkp','gbp','gel',
+  'gip','gmd','gnf','gtq','gyd','hkd','hnl','htg','huf','idr','ils','inr','isk','jmd','jod',
+  'jpy','kes','kgs','khr','kmf','krw','kwd','kyd','kzt','lak','lbp','lkr','lrd','lsl','mad',
+  'mdl','mga','mkd','mmk','mnt','mop','mur','mvr','mwk','mxn','myr','mzn','nad','ngn','nio',
+  'nok','npr','nzd','omr','pab','pen','pgk','php','pkr','pln','pyg','qar','ron','rsd','rub',
+  'rwf','sar','sbd','scr','sek','sgd','shp','sle','sos','srd','szl','thb','tjs','tnd','top',
+  'try','ttd','twd','tzs','uah','ugx','uyu','uzs','vnd','vuv','wst','xaf','xcd','xof','xpf',
+  'yer','zar','zmw','usdc',
+];
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -43,7 +57,7 @@ router.post(
     body('productId').isUUID().withMessage('Valid product ID is required'),
     body('countryId').isUUID().withMessage('Valid country ID is required'),
     body('price').isFloat({ min: 0 }).withMessage('Price must be a positive number'),
-    body('currency').trim().notEmpty().withMessage('Currency is required'),
+    body('currency').trim().toLowerCase().isIn(STRIPE_CURRENCIES).withMessage(`Currency must be a valid Stripe-supported ISO 4217 code (e.g. eur, usd)`),
     body('quantity').isInt({ min: 0 }).withMessage('Quantity must be a non-negative integer'),
     body('isAvailable').optional().isBoolean().withMessage('isAvailable must be boolean'),
     validate,
@@ -200,7 +214,7 @@ router.put(
   [
     param('id').isUUID().withMessage('Invalid country product ID'),
     body('price').optional().isFloat({ min: 0 }).withMessage('Price must be a positive number'),
-    body('currency').optional().trim().notEmpty().withMessage('Currency cannot be empty'),
+    body('currency').optional().trim().toLowerCase().isIn(STRIPE_CURRENCIES).withMessage(`Currency must be a valid Stripe-supported ISO 4217 code (e.g. eur, usd)`),
     body('quantity').optional().isInt({ min: 0 }).withMessage('Quantity must be a non-negative integer'),
     body('isAvailable').optional().isBoolean().withMessage('isAvailable must be boolean'),
     validate,

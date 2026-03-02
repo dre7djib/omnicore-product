@@ -56,6 +56,12 @@ class CountryProductService {
 
   async deleteCountryProduct(id) {
     await this.getCountryProductById(id);
+    const itemCount = await countryProductRepository.hasOrderItems(id);
+    if (itemCount > 0) {
+      const err = new Error(`Cannot delete: this product listing has ${itemCount} existing order item(s)`);
+      err.status = 409;
+      throw err;
+    }
     return countryProductRepository.delete(id);
   }
 
