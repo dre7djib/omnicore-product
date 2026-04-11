@@ -58,7 +58,7 @@ router.post(
     body('productId').isUUID().withMessage('Valid product ID is required'),
     body('countryId').isUUID().withMessage('Valid country ID is required'),
     body('price').isFloat({ min: 0 }).withMessage('Price must be a positive number'),
-    body('currency').trim().toLowerCase().isIn(STRIPE_CURRENCIES).withMessage(`Currency must be a valid Stripe-supported ISO 4217 code (e.g. eur, usd)`),
+    body('currency').trim().toLowerCase().isIn(STRIPE_CURRENCIES).withMessage('Currency must be a valid Stripe-supported ISO 4217 code (e.g. eur, usd)'),
     body('quantity').isInt({ min: 0 }).withMessage('Quantity must be a non-negative integer'),
     body('isAvailable').optional().isBoolean().withMessage('isAvailable must be boolean'),
     validate,
@@ -215,7 +215,7 @@ router.put(
   [
     param('id').isUUID().withMessage('Invalid country product ID'),
     body('price').optional().isFloat({ min: 0 }).withMessage('Price must be a positive number'),
-    body('currency').optional().trim().toLowerCase().isIn(STRIPE_CURRENCIES).withMessage(`Currency must be a valid Stripe-supported ISO 4217 code (e.g. eur, usd)`),
+    body('currency').optional().trim().toLowerCase().isIn(STRIPE_CURRENCIES).withMessage('Currency must be a valid Stripe-supported ISO 4217 code (e.g. eur, usd)'),
     body('quantity').optional().isInt({ min: 0 }).withMessage('Quantity must be a non-negative integer'),
     body('isAvailable').optional().isBoolean().withMessage('isAvailable must be boolean'),
     validate,
