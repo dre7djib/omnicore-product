@@ -4,4 +4,5 @@ module.exports = {
   port: process.env.PORT || 3001,
   nodeEnv: process.env.NODE_ENV || 'development',
   databaseUrl: process.env.DATABASE_URL,
+  internalServiceToken: process.env.INTERNAL_SERVICE_TOKEN,
 };

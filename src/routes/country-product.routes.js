@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const countryProductController = require('../controllers/country-product.controller');
 const { body, param, validationResult } = require('express-validator');
+const internalAuth = require('../middlewares/internalAuth');
 
 // Stripe-supported ISO 4217 currency codes
 const STRIPE_CURRENCIES = [
@@ -261,6 +262,7 @@ router.put(
  */
 router.patch(
   '/:id/stock',
+  internalAuth,
   [
     param('id').isUUID().withMessage('Invalid country product ID'),
     body('quantity').isInt({ min: 0 }).withMessage('Quantity must be a non-negative integer'),
