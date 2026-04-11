@@ -5,7 +5,9 @@ const { logger } = require('../config/logger');
  * Called before the generic fallback so DB errors never surface as raw 500s.
  */
 const mapPrismaError = (err) => {
-  if (!err.code || !err.code.startsWith('P')) { return null; }
+  if (!err.code || !err.code.startsWith('P')) {
+    return null;
+  }
 
   switch (err.code) {
     case 'P2002': {
