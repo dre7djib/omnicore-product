@@ -26,6 +26,9 @@ RUN cd omnicore-db && npx prisma generate
 
 # Prune devDependencies for a lean production image
 RUN npm prune --omit=dev
+# Remove @types/jest from workspace node_modules — its nested picomatch@4.x has a CVE
+# and npm prune does not always clean deeply nested workspace-specific devDep trees.
+RUN find . -path "*/omnicore-product/node_modules/@types/jest" -type d -exec rm -rf {} + 2>/dev/null; true
 
 # ── Runner ────────────────────────────────────────────────────────────────────
 FROM node:22-alpine3.21
