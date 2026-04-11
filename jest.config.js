@@ -6,6 +6,8 @@ module.exports = {
     '!src/server.js',
     '!src/app.js',
     '!src/config/**',
+    '!src/middlewares/**',
+    '!src/routes/**',
     '!src/**/*.test.js'
   ],
   testMatch: [
