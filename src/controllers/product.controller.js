@@ -96,7 +96,7 @@ class ProductController {
     try {
       const file = req.file;
       if (!file) {
-        return res.status(400).json({ error: 'No file uploaded' });
+        return res.status(400).json({ error: { code: 'FILE_REQUIRED', message: 'No file uploaded', status: 400 } });
       }
 
       const image = await productService.addProductImageWithUpload(req.params.id, file.buffer);
