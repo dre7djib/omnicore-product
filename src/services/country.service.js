@@ -1,10 +1,13 @@
 const countryRepository = require('../repositories/country.repository');
 
+const conflict = (msg) => Object.assign(new Error(msg), { status: 409, code: 'ALREADY_EXISTS' });
+const notFound = (msg) => Object.assign(new Error(msg), { status: 404, code: 'NOT_FOUND' });
+
 class CountryService {
   async createCountry(data) {
     const existingCountry = await countryRepository.findByCode(data.countryCode);
     if (existingCountry) {
-      throw new Error(`Country with code ${data.countryCode} already exists`);
+      throw conflict(`Country with code ${data.countryCode} already exists`);
     }
     return countryRepository.create(data);
   }
@@ -16,7 +19,7 @@ class CountryService {
   async getCountryById(id) {
     const country = await countryRepository.findById(id);
     if (!country) {
-      throw new Error('Country not found');
+      throw notFound('Country not found');
     }
     return country;
   }
@@ -27,7 +30,7 @@ class CountryService {
     if (data.countryCode) {
       const existingCountry = await countryRepository.findByCode(data.countryCode);
       if (existingCountry && existingCountry.id !== id) {
-        throw new Error(`Country with code ${data.countryCode} already exists`);
+        throw conflict(`Country with code ${data.countryCode} already exists`);
       }
     }
 

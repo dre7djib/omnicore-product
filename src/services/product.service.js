@@ -2,6 +2,8 @@ const productRepository = require('../repositories/product.repository');
 const productImageRepository = require('../repositories/product-image.repository');
 const cloudinaryService = require('./cloudinary.service');
 
+const notFound = (msg) => Object.assign(new Error(msg), { status: 404, code: 'NOT_FOUND' });
+
 class ProductService {
   async createProduct(data) {
     const { images, ...productData } = data;
@@ -49,7 +51,7 @@ class ProductService {
   async getProductById(id) {
     const product = await productRepository.findById(id);
     if (!product) {
-      throw new Error('Product not found');
+      throw notFound('Product not found');
     }
     return product;
   }
@@ -99,7 +101,7 @@ class ProductService {
     const image = await productImageRepository.findById(imageId);
 
     if (!image || image.productId !== productId) {
-      throw new Error('Image not found for this product');
+      throw notFound('Image not found for this product');
     }
 
     await productImageRepository.setPrimary(productId, imageId);
@@ -109,7 +111,7 @@ class ProductService {
   async deleteProductImage(imageId) {
     const image = await productImageRepository.findById(imageId);
     if (!image) {
-      throw new Error('Image not found');
+      throw notFound('Image not found');
     }
 
     if (image.publicId) {

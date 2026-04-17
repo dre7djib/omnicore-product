@@ -2,16 +2,19 @@ const countryProductRepository = require('../repositories/country-product.reposi
 const productRepository = require('../repositories/product.repository');
 const countryRepository = require('../repositories/country.repository');
 
+const conflict = (msg) => Object.assign(new Error(msg), { status: 409, code: 'ALREADY_EXISTS' });
+const notFound = (msg) => Object.assign(new Error(msg), { status: 404, code: 'NOT_FOUND' });
+
 class CountryProductService {
   async createCountryProduct(data) {
     const product = await productRepository.findById(data.productId);
     if (!product) {
-      throw new Error('Product not found');
+      throw notFound('Product not found');
     }
 
     const country = await countryRepository.findById(data.countryId);
     if (!country) {
-      throw new Error('Country not found');
+      throw notFound('Country not found');
     }
 
     const existing = await countryProductRepository.findByProductAndCountry(
@@ -19,7 +22,7 @@ class CountryProductService {
       data.countryId,
     );
     if (existing) {
-      throw new Error('Country product mapping already exists');
+      throw conflict('Country product mapping already exists');
     }
 
     return countryProductRepository.create(data);
@@ -32,7 +35,7 @@ class CountryProductService {
   async getCountryProductById(id) {
     const countryProduct = await countryProductRepository.findById(id);
     if (!countryProduct) {
-      throw new Error('Country product not found');
+      throw notFound('Country product not found');
     }
     return countryProduct;
   }
@@ -40,7 +43,7 @@ class CountryProductService {
   async getProductsByCountry(countryId) {
     const country = await countryRepository.findById(countryId);
     if (!country) {
-      throw new Error('Country not found');
+      throw notFound('Country not found');
     }
 
     return countryProductRepository.findAll({
